@@ -9,7 +9,7 @@ from tado_switchbot_temperature.config import settings, SyncDevice
 logger = logging.getLogger(__name__)
 
 
-def adjust():
+def sync():
     logger.info(f'Tado username is {settings["tado.username"]} and password is {settings["tado.password"]}')
 
     switchbot = SwitchBotClient(token=settings['switchbot.open_token'])
