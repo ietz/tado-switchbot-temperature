@@ -9,5 +9,5 @@ settings = Dynaconf(
 
 
 class SyncDevice(TypedDict):
+    zone_id: int
     meter_id: str
-    valve_id: str

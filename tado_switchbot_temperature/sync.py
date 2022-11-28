@@ -1,6 +1,7 @@
 import logging
 from typing import List, Dict
 
+from PyTado.interface import Tado
 from switchbot_client import SwitchBotClient
 from switchbot_client.devices import MeterPlusUs, MeterPlusJp
 
@@ -10,12 +11,18 @@ logger = logging.getLogger(__name__)
 
 
 def sync():
-    logger.info(f'Tado username is {settings["tado.username"]} and password is {settings["tado.password"]}')
-
     sync_devices: List[SyncDevice] = settings['devices']
+
     meters = get_meters(sync_devices)
-    for meter in meters.values():
-        logger.info(f'{meter.device_name} reports a temperature of {meter.temperature()} °C')
+
+    tado = Tado(username=settings['tado.username'], password=settings['tado.password'])
+    zone_states = tado.getZoneStates()['zoneStates']
+
+    for sync_device in sync_devices:
+        meter = meters[sync_device['meter_id']]
+        zone_state = zone_states[str(sync_device['zone_id'])]
+        zone_temperature = zone_state['sensorDataPoints']['insideTemperature']['celsius']
+        logger.info(f'{meter.device_name} reports a temperature of {meter.temperature()} °C while tado returns {zone_temperature}')
 
 
 def get_meters(sync_devices: List[SyncDevice]) -> Dict[str, MeterPlusUs | MeterPlusJp]:
