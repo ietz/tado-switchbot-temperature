@@ -55,5 +55,5 @@ class TadoZones:
 
     def update(self):
         zone_states = self._tado.getZoneStates()['zoneStates']
-        for zone_id, zone_state in zone_states:
-            self[zone_id].state = zone_state
+        for zone_id, zone_state in zone_states.items():
+            self[int(zone_id)].state = zone_state
