@@ -8,6 +8,7 @@ class TadoZone:
         self._tado = tado
         self._data = data
         self.state = None
+        self._offset: Optional[float] = None
 
     @property
     def leader_id(self) -> str:
@@ -24,11 +25,15 @@ class TadoZone:
 
     @property
     def offset(self) -> float:
-        return self._tado.getDeviceInfo(self.leader_id, cmd='temperatureOffset')['celsius']
+        if self._offset is None:
+            self._offset = self._tado.getDeviceInfo(self.leader_id, cmd='temperatureOffset')['celsius']
+
+        return self._offset
 
     @offset.setter
     def offset(self, value: float):
         self._tado.setTempOffset(self.leader_id, value)
+        self._offset = value
 
 
 class TadoZones:
