@@ -33,7 +33,7 @@ def sync():
         if abs(meter_temperature - zone.temperature) > 0.5:
             new_offset = meter_temperature - zone.temperature + zone.offset
 
-            logger.info(f'Changing temperature offset to {new_offset:.02f} from {zone.offset:.02jf}')
+            logger.info(f'Changing temperature offset to {new_offset:.02f} from {zone.offset:.02f}')
             zone.offset = new_offset
 
 
