@@ -30,12 +30,12 @@ def sync():
             meter = meters[sync_device['meter_id']]
             meter_temperature = meter.temperature()
 
-            logger.info(f'{meter.device_name} reports a temperature of {meter_temperature} °C while tado returns {zone.temperature}')
+            logger.info(f'{meter.device_name} reports a temperature of {meter_temperature} °C while tado reports {zone.temperature} C° in {zone.name}')
 
             if abs(meter_temperature - zone.temperature) > 0.5:
                 new_offset = meter_temperature - zone.temperature + zone.offset
 
-                logger.info(f'Changing temperature offset to {new_offset:.02f} from {zone.offset:.02f}')
+                logger.info(f'Changing temperature offset in {zone.name} from {zone.offset:.02f} to {new_offset:.02f}')
                 zone.offset = new_offset
 
         time.sleep(5 * 60)

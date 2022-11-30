@@ -19,6 +19,10 @@ class TadoZone:
                 return device['serialNo']
 
     @property
+    def name(self) -> str:
+        return self._data['name']
+
+    @property
     def temperature(self) -> Optional[float]:
         """The current temperature. Is None if not updated since the last offset change"""
         if self.state is None:
