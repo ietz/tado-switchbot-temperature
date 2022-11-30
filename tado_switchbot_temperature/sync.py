@@ -23,12 +23,12 @@ def sync():
         zones.update()
 
         for sync_device in sync_devices:
-            meter = meters[sync_device['meter_id']]
-            meter_temperature = meter.temperature()
-
             zone = zones[sync_device['zone_id']]
             if zone.temperature is None:
                 continue
+
+            meter = meters[sync_device['meter_id']]
+            meter_temperature = meter.temperature()
 
             logger.info(f'{meter.device_name} reports a temperature of {meter_temperature} °C while tado returns {zone.temperature}')
 
