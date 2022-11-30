@@ -3,6 +3,8 @@ from typing import Optional
 
 from PyTado.interface import Tado
 
+from tado_switchbot_temperature.config import settings
+
 
 class TadoZone:
     def __init__(self, tado: Tado, data):
@@ -53,6 +55,10 @@ class TadoZones:
     def __init__(self, tado: Tado):
         self._tado = tado
         self._zones = {zone_data['id']: TadoZone(tado=tado, data=zone_data) for zone_data in tado.getZones()}
+
+    @staticmethod
+    def from_config() -> 'TadoZones':
+        return TadoZones(Tado(username=settings['tado.username'], password=settings['tado.password']))
 
     def __getitem__(self, item) -> TadoZone:
         return self._zones[item]

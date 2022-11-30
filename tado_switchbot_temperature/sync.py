@@ -2,7 +2,6 @@ import logging
 import time
 from typing import List, Dict
 
-from PyTado.interface import Tado
 from switchbot_client import SwitchBotClient
 from switchbot_client.devices import MeterPlusUs, MeterPlusJp
 
@@ -16,8 +15,7 @@ def sync():
     sync_devices: List[SyncDevice] = settings['devices']
 
     meters = get_meters(sync_devices)
-
-    zones = TadoZones(Tado(username=settings['tado.username'], password=settings['tado.password']))
+    zones = TadoZones.from_config()
 
     while True:
         zones.update()
