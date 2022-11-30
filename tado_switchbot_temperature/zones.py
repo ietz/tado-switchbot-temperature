@@ -26,7 +26,7 @@ class TadoZone:
 
         temperature_measurement = self.state['sensorDataPoints']['insideTemperature']
         measurement_timestamp = dt.datetime.fromisoformat(temperature_measurement['timestamp'].replace('Z', '+00:00'))
-        if measurement_timestamp < self._offset_update_timestamp:
+        if self._offset_update_timestamp is not None and measurement_timestamp < self._offset_update_timestamp:
             return None
 
         return temperature_measurement['celsius']
