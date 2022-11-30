@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import List, Dict
 
 from PyTado.interface import Tado
@@ -16,25 +17,28 @@ def sync():
 
     meters = get_meters(sync_devices)
 
-    tado = Tado(username=settings['tado.username'], password=settings['tado.password'])
-    zones = TadoZones(tado)
-    zones.update()
+    zones = TadoZones(Tado(username=settings['tado.username'], password=settings['tado.password']))
 
-    for sync_device in sync_devices:
-        meter = meters[sync_device['meter_id']]
-        meter_temperature = meter.temperature()
+    while True:
+        zones.update()
 
-        zone = zones[sync_device['zone_id']]
-        if zone.temperature is None:
-            continue
+        for sync_device in sync_devices:
+            meter = meters[sync_device['meter_id']]
+            meter_temperature = meter.temperature()
 
-        logger.info(f'{meter.device_name} reports a temperature of {meter_temperature} °C while tado returns {zone.temperature}')
+            zone = zones[sync_device['zone_id']]
+            if zone.temperature is None:
+                continue
 
-        if abs(meter_temperature - zone.temperature) > 0.5:
-            new_offset = meter_temperature - zone.temperature + zone.offset
+            logger.info(f'{meter.device_name} reports a temperature of {meter_temperature} °C while tado returns {zone.temperature}')
 
-            logger.info(f'Changing temperature offset to {new_offset:.02f} from {zone.offset:.02f}')
-            zone.offset = new_offset
+            if abs(meter_temperature - zone.temperature) > 0.5:
+                new_offset = meter_temperature - zone.temperature + zone.offset
+
+                logger.info(f'Changing temperature offset to {new_offset:.02f} from {zone.offset:.02f}')
+                zone.offset = new_offset
+
+        time.sleep(5 * 60)
 
 
 def get_meters(sync_devices: List[SyncDevice]) -> Dict[str, MeterPlusUs | MeterPlusJp]:
