@@ -1,3 +1,4 @@
+import datetime as dt
 from typing import Optional
 
 from PyTado.interface import Tado
@@ -9,6 +10,7 @@ class TadoZone:
         self._data = data
         self.state = None
         self._offset: Optional[float] = None
+        self._offset_update_timestamp: Optional[dt.datetime] = None
 
     @property
     def leader_id(self) -> str:
@@ -18,10 +20,16 @@ class TadoZone:
 
     @property
     def temperature(self) -> Optional[float]:
+        """The current temperature. Is None if not updated since the last offset change"""
         if self.state is None:
             return None
 
-        return self.state['sensorDataPoints']['insideTemperature']['celsius']
+        temperature_measurement = self.state['sensorDataPoints']['insideTemperature']
+        measurement_timestamp = dt.datetime.fromisoformat(temperature_measurement['timestamp'].replace('Z', '+00:00'))
+        if measurement_timestamp < self._offset_update_timestamp:
+            return None
+
+        return temperature_measurement['celsius']
 
     @property
     def offset(self) -> float:
@@ -33,6 +41,7 @@ class TadoZone:
     @offset.setter
     def offset(self, value: float):
         self._tado.setTempOffset(self.leader_id, value)
+        self._offset_update_timestamp = dt.datetime.now()
         self._offset = value
 
 
