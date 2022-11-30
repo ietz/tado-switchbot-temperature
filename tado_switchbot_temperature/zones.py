@@ -1,5 +1,5 @@
 import datetime as dt
-from typing import Optional
+from typing import Optional, Iterable
 
 from PyTado.interface import Tado
 
@@ -13,6 +13,10 @@ class TadoZone:
         self.state = None
         self._offset: Optional[float] = None
         self._offset_update_timestamp: Optional[dt.datetime] = None
+
+    @property
+    def id(self) -> int:
+        return self._data['id']
 
     @property
     def leader_id(self) -> str:
@@ -60,6 +64,9 @@ class TadoZones:
     def from_config() -> 'TadoZones':
         return TadoZones(Tado(username=settings['tado.username'], password=settings['tado.password']))
 
+    def __iter__(self) -> Iterable[TadoZone]:
+        return iter(self._zones.values())
+
     def __getitem__(self, item) -> TadoZone:
         return self._zones[item]
 
@@ -67,3 +74,8 @@ class TadoZones:
         zone_states = self._tado.getZoneStates()['zoneStates']
         for zone_id, zone_state in zone_states.items():
             self[int(zone_id)].state = zone_state
+
+
+def print_available_zones():
+    for zone in TadoZones.from_config():
+        print(f'id = {zone.id}, name = {zone.name}')
