@@ -13,9 +13,10 @@ logger = logging.getLogger(__name__)
 
 def sync():
     sync_devices: List[SyncDevice] = settings['devices']
-
     meters = get_meters(sync_devices)
     zones = TadoZones.from_config()
+
+    print_sync_devices(sync_devices, meters, zones)
 
     while True:
         zones.update()
@@ -53,3 +54,9 @@ def get_meters(sync_devices: List[SyncDevice]) -> Dict[str, MeterPlusUs | MeterP
 
 class InvalidMeterError(Exception):
     pass
+
+
+def print_sync_devices(sync_devices: List[SyncDevice], meters: Dict[str, MeterPlusUs | MeterPlusJp], zones: TadoZones):
+    logger.info('Synchronizing the following devices')
+    for sync_device in sync_devices:
+        logger.info(f'meter = {meters[sync_device["meter_id"]].device_name} <-> zone = {zones[sync_device["zone_id"]].name}')
