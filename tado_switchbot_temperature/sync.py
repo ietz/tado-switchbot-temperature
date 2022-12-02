@@ -2,7 +2,7 @@ import logging
 import time
 from typing import List, Dict
 
-from switchbot_client.devices import MeterPlusUs, MeterPlusJp
+from switchbot_client.devices import MeterPlus
 
 from tado_switchbot_temperature.config import settings, SyncDevice
 from tado_switchbot_temperature.meters import get_meters
@@ -40,7 +40,7 @@ def sync():
         time.sleep(settings.get('sync_interval', 5 * 60))
 
 
-def print_sync_devices(sync_devices: List[SyncDevice], meters: Dict[str, MeterPlusUs | MeterPlusJp], zones: TadoZones):
+def print_sync_devices(sync_devices: List[SyncDevice], meters: Dict[str, MeterPlus], zones: TadoZones):
     logger.info('Synchronizing the following devices')
     for sync_device in sync_devices:
         logger.info(f'meter = {meters[sync_device["meter_id"]].device_name} <-> zone = {zones[sync_device["zone_id"]].name}')
