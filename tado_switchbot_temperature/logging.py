@@ -3,10 +3,10 @@ from os import PathLike
 from typing import Optional
 
 
-def configure_logging(log_file_name: Optional[str | PathLike[str]] = None):
+def configure_logging(level: str | int, file_name: Optional[str | PathLike[str]] = None):
     handlers = [logging.StreamHandler()]
-    if log_file_name is not None:
-        handlers.append(logging.FileHandler(log_file_name))
+    if file_name is not None:
+        handlers.append(logging.FileHandler(file_name))
 
     logging.basicConfig(
         level=logging.WARNING,
@@ -16,4 +16,4 @@ def configure_logging(log_file_name: Optional[str | PathLike[str]] = None):
     )
 
     library_name = __name__.split('.')[0]
-    logging.getLogger(library_name).setLevel(logging.INFO)
+    logging.getLogger(library_name).setLevel(level)
