@@ -42,7 +42,7 @@ def sync():
 
             if abs(temperature_delta.value) > settings.get('offset_update_threshold', 0.5):
                 new_offset = temperature_delta.value + zone.offset
-                logger.info(f'Changing temperature offset in {zone.name} from {zone.offset:.02f} to {new_offset:.02f}')
+                logger.info(f'Changing the temperature offset in {zone.name} from {zone.offset:.02f} to {new_offset:.02f}')
                 zone.offset = new_offset
                 temperature_delta.zero()
 
