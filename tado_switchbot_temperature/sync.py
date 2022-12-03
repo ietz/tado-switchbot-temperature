@@ -35,7 +35,7 @@ def sync():
             meter = meters[sync_device['meter_id']]
             meter_temperature = meter.temperature()
 
-            logger.info(f'{meter.device_name} reports a temperature of {meter_temperature} °C while tado reports {zone.temperature} C° in {zone.name}')
+            logger.debug(f'{meter.device_name} reports a temperature of {meter_temperature} °C while tado reports {zone.temperature} C° in {zone.name}')
 
             temperature_delta = temperature_deltas[sync_device['zone_id']]
             temperature_delta.observe(meter_temperature - zone.temperature)
@@ -52,4 +52,4 @@ def sync():
 def print_sync_devices(sync_devices: List[SyncDevice], meters: Dict[str, MeterPlus], zones: TadoZones):
     logger.info('Synchronizing the following devices')
     for sync_device in sync_devices:
-        logger.info(f'meter = {meters[sync_device["meter_id"]].device_name} <-> zone = {zones[sync_device["zone_id"]].name}')
+        logger.info(f'meter = {meters[sync_device["meter_id"]].device_name} -> zone = {zones[sync_device["zone_id"]].name}')
