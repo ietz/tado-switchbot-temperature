@@ -1,3 +1,4 @@
+import datetime as dt
 import logging
 import time
 from typing import List, Dict
@@ -5,6 +6,7 @@ from typing import List, Dict
 from switchbot_client.devices import MeterPlus
 
 from tado_switchbot_temperature.config import settings, SyncDevice
+from tado_switchbot_temperature.ewma import EwmaSmoother
 from tado_switchbot_temperature.meters import get_meters
 from tado_switchbot_temperature.zones import TadoZones
 
@@ -15,6 +17,10 @@ def sync():
     sync_devices: List[SyncDevice] = settings['devices']
     meters = get_meters(sync_devices)
     zones = TadoZones.from_config()
+    temperature_deltas = {
+        zone.id: EwmaSmoother(halftime=dt.timedelta(seconds=settings.get('offset_smoothing_halftime', 45 * 60)))
+        for zone in zones
+    }
 
     print_sync_devices(sync_devices, meters, zones)
 
@@ -31,11 +37,14 @@ def sync():
 
             logger.info(f'{meter.device_name} reports a temperature of {meter_temperature} °C while tado reports {zone.temperature} C° in {zone.name}')
 
-            if abs(meter_temperature - zone.temperature) > settings.get('offset_threshold', 0.5):
-                new_offset = meter_temperature - zone.temperature + zone.offset
+            temperature_delta = temperature_deltas[sync_device['zone_id']]
+            temperature_delta.observe(meter_temperature - zone.temperature)
 
+            if abs(temperature_delta.value) > settings.get('offset_threshold', 0.5):
+                new_offset = temperature_delta.value + zone.offset
                 logger.info(f'Changing temperature offset in {zone.name} from {zone.offset:.02f} to {new_offset:.02f}')
                 zone.offset = new_offset
+                temperature_delta.zero()
 
         time.sleep(settings.get('sync_interval', 5 * 60))
 
