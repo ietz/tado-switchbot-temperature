@@ -40,13 +40,13 @@ def sync():
             temperature_delta = temperature_deltas[sync_device['zone_id']]
             temperature_delta.observe(meter_temperature - zone.temperature)
 
-            if abs(temperature_delta.value) > settings.get('offset_threshold', 0.5):
+            if abs(temperature_delta.value) > settings.get('offset_update_threshold', 0.5):
                 new_offset = temperature_delta.value + zone.offset
                 logger.info(f'Changing temperature offset in {zone.name} from {zone.offset:.02f} to {new_offset:.02f}')
                 zone.offset = new_offset
                 temperature_delta.zero()
 
-        time.sleep(settings.get('sync_interval', 5 * 60))
+        time.sleep(settings.get('probe_interval', 5 * 60))
 
 
 def print_sync_devices(sync_devices: List[SyncDevice], meters: Dict[str, MeterPlus], zones: TadoZones):
