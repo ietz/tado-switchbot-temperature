@@ -51,7 +51,7 @@ class TadoZone:
     @offset.setter
     def offset(self, value: float):
         self._tado.setTempOffset(self.leader_id, value)
-        self._offset_update_timestamp = dt.datetime.now()
+        self._offset_update_timestamp = dt.datetime.now().astimezone()
         self._offset = value
 
 
