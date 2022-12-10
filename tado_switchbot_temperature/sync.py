@@ -35,10 +35,13 @@ def sync():
             meter = meters[sync_device['meter_id']]
             meter_temperature = meter.temperature()
 
-            logger.debug(f'{meter.device_name} reports a temperature of {meter_temperature} °C while tado reports {zone.temperature} C° in {zone.name}')
-
             temperature_delta = temperature_deltas[sync_device['zone_id']]
             temperature_delta.observe(meter_temperature - zone.temperature)
+
+            logger.debug(
+                f'{meter.device_name} reports a temperature of {meter_temperature} °C while tado reports {zone.temperature} C° in {zone.name}. '
+                f'The smoothed difference is now at {temperature_delta.value:.02f}.'
+            )
 
             if abs(temperature_delta.value) > settings.get('offset_update_threshold', 0.5):
                 new_offset = temperature_delta.value + zone.offset
