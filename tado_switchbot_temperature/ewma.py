@@ -13,7 +13,7 @@ class EwmaSmoother:
         if time is None:
             time = dt.datetime.now()
 
-        if self.value is None:
+        if self.value is None or self.halftime.total_seconds() == 0:
             self.value = value
             self.last_observation_time = time
         else:
