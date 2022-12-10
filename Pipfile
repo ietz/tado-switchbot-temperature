@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 dynaconf = "~=3.1.11"
-switchbot-client = {editable = true, ref = "develop", git = "https://github.com/kzosabe/switchbot-client.git"}
+switchbot-client = {editable = true, ref = "d578af8b8062d6701fc332e07993d0edf820e9e7", git = "https://github.com/kzosabe/switchbot-client.git"}
 python-tado = "==0.13.0"
 
 [dev-packages]
